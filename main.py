@@ -18,12 +18,12 @@ Face = namedtuple('Face', ['x', 'y', 'dx', 'dy', 'xpos', 'ypos'])
 
 skinmap = {
     'head': [
-        Face(2, 0, 2, 2, 8 * pdf_grid_size + pdf_padding, 0),
-        Face(0, 2, 2, 2, 0, 8 * pdf_grid_size + pdf_padding),
-        Face(2, 2, 2, 2, 8 * pdf_grid_size + pdf_padding, 8 * pdf_grid_size + pdf_padding),
-        Face(4, 2, 2, 2, 16 * pdf_grid_size + 2 * pdf_padding, 8 * pdf_grid_size + pdf_padding),
-        Face(6, 2, 2, 2, 24 * pdf_grid_size + 3 * pdf_padding, 8 * pdf_grid_size + pdf_padding),
-        Face(4, 0, 2, 2, 8 * pdf_grid_size + pdf_padding, 16 * pdf_grid_size + 2 * pdf_padding)
+        Face(2, 0, 2, 2, 8, 0),
+        Face(0, 2, 2, 2, 0, 8),
+        Face(2, 2, 2, 2, 8, 8),
+        Face(4, 2, 2, 2, 16, 8),
+        Face(6, 2, 2, 2, 24, 8),
+        Face(4, 0, 2, 2, 8, 16)
     ],
 
     'body': [
@@ -100,6 +100,10 @@ def get_pixelmap(pixelmap, face: Face):
 def get_min_left(faces):
     return pdf_left + min(faces, key=lambda it: it.xpos).xpos
 
+def get_size(faces):
+    return max(map(lambda it: (it.xpos + it.dx) * pdf_grid_size, faces)), \
+           max(map(lambda it: (it.xpos + it.dx) * pdf_grid_size, faces))
+
 
 def draw_title(cnv: Canvas, text):
     cnv.setStrokeColorRGB(0, 0, 0)
@@ -115,9 +119,9 @@ def draw_text(cnv: Canvas, text, faces):
     cnv.drawString(get_min_left(faces), 297 * mm - pdf_top - faces[0].ypos, text)
 
 
-def draw_grid(cnv, pixelmap, face: Face, transparent=False):
-    xs = pdf_left + face.xpos
-    ys = 297 * mm - pdf_top - face.ypos
+def draw_grid(cnv, pixelmap, face: Face, cx, cy, transparent=False):
+    xs = pdf_left + face.xpos * pdf_grid_size + face.xpos / pdf_padding * pdf_padding
+    ys = 297 * mm - pdf_top - face.ypos * pdf_grid_size - face.ypos / pdf_padding * pdf_padding
     cnv.setStrokeColorRGB(0, 0, 0)
     cnv.rect(xs, ys, pdf_grid_size * len(pixelmap[0]), -pdf_grid_size * len(pixelmap), True, False)
 
@@ -129,8 +133,6 @@ def draw_grid(cnv, pixelmap, face: Face, transparent=False):
             if dot[3] > 0:
                 cnv.setFillColorRGB(dot[0]/255, dot[1]/255, dot[2]/255)
                 cnv.rect(x, y, pdf_grid_size+1, -pdf_grid_size-1, False, True)
-                #cnv.line(x, y, x + pdf_grid_size, y)
-                #cnv.line(x, y, x, y - pdf_grid_size)
             elif not transparent:
                 cnv.setFillColorRGB(0.85, 0.85, 0.85)
                 cnv.rect(x, y, pdf_grid_size/2, -pdf_grid_size/2, False, True)
@@ -143,9 +145,10 @@ def draw_grid(cnv, pixelmap, face: Face, transparent=False):
         x = xs + dx * pdf_grid_size
         cnv.line(x, ys, x, ys - pdf_grid_size * len(pixelmap))
 
-
-
-
+def draw_bound_rect(cnv, x, y, xsize, ysize):
+    cnv.setFillColorRGB(1, 0, 0, 0)
+    cnv.setStrokeColorRGB(1, 0, 0, 1)
+    cnv.rect(x, y, xsize, ysize)
 
 def place_mask(cnv, bitmap):
     for face in skinmap['mask0']:
@@ -166,14 +169,22 @@ if __name__ == '__main__':
 
     canvas = Canvas(pdf_file_name)
     draw_title(canvas, f'{mob_name}{" flip" if face_flip_horizontally else ""}')
+
+    current_xpos = pdf_left
+    current_ypos = 297 * mm - pdf_top
     
-    for key in ['head', 'body']:
+    for key in ['head']:
         draw_text(canvas, key, skinmap[key])
         for face in skinmap[key]:
             face_pixelmap = get_pixelmap(bitmap, face)
-            draw_grid(canvas, face_pixelmap, face)
+            draw_grid(canvas, face_pixelmap, face, current_xpos, current_ypos)
+        xs, ys = get_size(skinmap[key])
+        draw_bound_rect(canvas, current_xpos, current_ypos, xs, -ys)
 
     canvas.showPage()
+    canvas.save()
+    exit()
+
     draw_title(canvas, f'{mob_name}{" flip" if face_flip_horizontally else ""}')
     for key in ['left hand', 'right hand']:
         draw_text(canvas, key, skinmap[key])
