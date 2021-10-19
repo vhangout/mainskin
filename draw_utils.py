@@ -8,8 +8,11 @@ paper_type = A4
 
 
 class DrawUtils:
-    def __init__(self, pixelmap, pdf_file_name, pdf_left_bound=1 * cm, pdf_top_bound=1 * cm, pdf_grid_size=5 * mm,
-                 pdf_face_padding=3 * mm, pdf_pad_model=1.5 * cm, face_flip_horizontally=False,
+    def __init__(self, pixelmap, pdf_file_name,
+                 pdf_left_bound=1 * cm, pdf_top_bound=1 * cm,
+                 pdf_grid_size=5 * mm,
+                 pdf_face_padding=3 * mm, pdf_part_padding=1.5 * cm,
+                 face_flip_horizontally=False,
                  place_mask_on_head=False):
         self.pixelmap = pixelmap
         self.pdf_file_name = pdf_file_name
@@ -17,7 +20,7 @@ class DrawUtils:
         self.pdf_top_bound = pdf_top_bound
         self.pdf_grid_size = pdf_grid_size
         self.pdf_face_padding = pdf_face_padding
-        self.pdf_pad_model = pdf_pad_model
+        self.pdf_part_padding = pdf_part_padding
         self.face_flip_horizontally = face_flip_horizontally
         self.place_mask_on_head = place_mask_on_head
         self.pdf_left, self.pdf_top = self.pdf_left_bound, paper_type[1] - self.pdf_top_bound
@@ -95,7 +98,7 @@ class DrawUtils:
         self.canvas.setStrokeColorRGB(1, 0, 0, 1)
         self.canvas.rect(self.current_xpos, self.current_ypos, xsize, ysize)
 
-    def draw_part(self, part_name):
+    def draw_part(self, part_name, update_position=True):
         part = skinmap[part_name]
         x_size, y_size = self.get_bound_rect(part)
 
@@ -105,13 +108,23 @@ class DrawUtils:
             self.draw_face_grid(face, self.current_xpos, self.current_ypos)
         self.draw_bound_rect(x_size, -y_size)
 
-        self.current_xpos = self.current_xpos + x_size
+        if not update_position:
+            return
+        self.current_xpos = self.current_xpos + x_size + self.pdf_part_padding
         if self.current_xpos + self.min_bound_rect[0] > paper_type[0] - self.pdf_left:
             self.current_xpos = self.pdf_left
-            self.current_ypos = self.current_ypos - y_size
+            self.current_ypos = self.current_ypos - y_size - self.pdf_part_padding
         if self.current_ypos - self.min_bound_rect[1] < self.pdf_top_bound:
             self.canvas.showPage()
             self.current_ypos = self.pdf_top
+
+    def draw_skin(self):
+        a = list(filter(lambda n:self.place_mask_on_head and n != 'mask', skinmap.keys()))
+        for part_name in filter(lambda n:self.place_mask_on_head and n == 'mask', skinmap.keys()):
+            self.draw_part(part_name, update_position=not (self.place_mask_on_head and part_name == 'head'))
+            if self.place_mask_on_head and part_name == 'head':
+                self.draw_part('mask')
+        self.canvas.save()
 
 
 # def place_mask(self.canvas, bitmap):
