@@ -2,6 +2,7 @@ import os
 import re
 from PIL import Image
 from draw_utils import DrawUtils
+from skinmap import skinmap
 
 face_flip_horizontally = False
 
@@ -19,11 +20,9 @@ if __name__ == '__main__':
 
     #draw_title(canvas, f'{mob_name}{" flip" if face_flip_horizontally else ""}')
 
-    draw_utils.draw_part('head')
-    draw_utils.draw_part('body')
-    draw_utils.draw_part('mask')
-    draw_utils.draw_part('head')
-
+    for part_name in skinmap.keys():
+        draw_utils.draw_part(part_name)
+    
     draw_utils.canvas.save()
     exit()
 
