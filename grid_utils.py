@@ -3,8 +3,9 @@ from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.units import cm, mm
 from reportlab.lib.pagesizes import A4
 
-#only for A4 portret paper size 210mm x 297mm
+# only for A4 portret paper size 210mm x 297mm
 paper_type = A4
+
 
 class GridUtils:
     def __init__(self, pdf_file_name,
@@ -22,25 +23,38 @@ class GridUtils:
         self.current_x = self.pdf_left
         self.current_y = self.pdf_top
 
-    def draw_grid(self, grid_size, row_count):
+    def __draw_grid(self, size, rows, cols):
         xs = self.current_x
         ys = self.current_y
-
         self.canvas.setStrokeColorRGB(0, 0, 0)
+        self.canvas.grid([xs + size * dx for dx in range(cols + 1)], [ys - size * dy for dy in range(rows + 1)])
 
-        col_count = trunc((paper_type[0] - 2 * self.pdf_left) / grid_size)
-
-        for dy in range(row_count + 1):
-            y = ys - dy * grid_size
-            self.canvas.line(xs, y, xs + grid_size * col_count, y)
-        for dx in range(col_count + 1):
-            x = xs + dx * grid_size
-            self.canvas.line(x, ys, x, ys - grid_size * row_count)
-
-    def draw_angles(self, height):
+    def __draw_angles(self, height):
         xs = self.current_x
         ys = self.current_y
+        self.canvas.setStrokeColorRGB(0, 0, 0)
+        self.canvas.lines([(xs, ys, xs + height * cos(radians(angle)),
+                            ys - height * sin(radians(angle))) for angle in range(5, 85, 5)])
+        self.canvas.setFillColorRGB(1, 1, 1, 1)
+        self.canvas.wedge(xs - cm, ys + cm, xs + cm, ys - cm, 0, -90, 1, 1)
 
-        for angle in range(5, 85, 5):
-            self.canvas.line(xs, ys, xs + height * cos(radians(angle)),
-                             ys - height * sin(radians(angle)))
+    def __draw_grid_mm(self, grid_size, height):
+        size = grid_size * mm
+        rows = trunc(height / size)
+        cols = trunc((paper_type[0] - 2 * self.pdf_left) / size)
+
+        self.__draw_grid(size, rows, cols)
+        self.__draw_angles(height * 0.95)
+        self.canvas.setFontSize(8)
+        self.canvas.setFillColorRGB(0, 0, 0, 1)
+        self.canvas.drawString(self.current_x + 0.5 * mm, self.current_y - 5 * mm, f'{int(grid_size)}mm')
+
+        self.current_y = self.current_y - rows * size - self.pdf_padding
+        if self.current_y - rows * size - self.pdf_padding < self.pdf_top_bound:
+            self.canvas.showPage()
+            self.current_y = self.pdf_top
+
+    def draw_grids(self, height, *args):
+        for grid_size in args:
+            self.__draw_grid_mm(grid_size, height)
+        self.canvas.save()

@@ -7,15 +7,16 @@ from skinmap import Face, skinmap, unit
 paper_type = A4
 
 
-class DrawUtils:
-    def __init__(self, pixelmap, pdf_file_name,
+class SkinUtils:
+    def __init__(self, pixelmap, pdf_file_name, mob_name='',
                  pdf_left_bound=1 * cm, pdf_top_bound=1 * cm,
                  pdf_grid_size=5 * mm,
                  pdf_face_padding=3 * mm, pdf_part_padding=1.5 * cm,
                  face_flip_horizontally=False,
-                 place_mask_on_head=False):
+                 place_mask_on_head=True):
         self.pixelmap = pixelmap
         self.pdf_file_name = pdf_file_name
+        self.mob_name = mob_name
         self.pdf_left_bound = pdf_left_bound
         self.pdf_top_bound = pdf_top_bound
         self.pdf_grid_size = pdf_grid_size
@@ -35,9 +36,6 @@ class DrawUtils:
         return [self.pixelmap[y][face.x * unit:face.x * unit + face.dx * unit]
                 for y in range(face.y * unit, face.y * unit + face.dy * unit)]
 
-    def get_min_left(self, faces):
-        return self.pdf_left + min(faces, key=lambda it: it.xpos).xpos
-
     def draw_face_grid(self, face: Face, current_x, current_y, transparent=False):
         pixelmap = self.get_pixelmap(face)
         xs = current_x + face.xpos * unit * self.pdf_grid_size + face.xpos / 2 * self.pdf_face_padding
@@ -51,7 +49,7 @@ class DrawUtils:
                 if dot[3] > 0:
                     self.canvas.setStrokeColorRGB(dot[0] / 255, dot[1] / 255, dot[2] / 255, 1)
                     self.canvas.setFillColorRGB(dot[0] / 255, dot[1] / 255, dot[2] / 255, 1)
-                    self.canvas.rect(x, y, self.pdf_grid_size + 1, -self.pdf_grid_size - 1, False, True)
+                    self.canvas.rect(x, y, self.pdf_grid_size, -self.pdf_grid_size, False, True)
                 elif not transparent:
                     self.canvas.setFillColorRGB(0.85, 0.85, 0.85, 0)
                     self.canvas.rect(x, y, self.pdf_grid_size / 2, -self.pdf_grid_size / 2, False, True)
@@ -59,19 +57,13 @@ class DrawUtils:
                                      -self.pdf_grid_size / 2, False,
                                      True)
 
-        self.canvas.setStrokeColorRGB(0, 0, 0)
-        for dy in range(len(pixelmap)):
-            y = ys - dy * self.pdf_grid_size
-            self.canvas.line(xs, y, xs + self.pdf_grid_size * len(pixelmap[0]) + 1, y)
-        for dx in range(len(pixelmap[0])):
-            x = xs + dx * self.pdf_grid_size
-            self.canvas.line(x, ys, x, ys - self.pdf_grid_size * len(pixelmap) - 1)
-        self.canvas.line(xs - 0.5, ys - len(pixelmap) * self.pdf_grid_size - 1,
-                         xs + self.pdf_grid_size * len(pixelmap[0]) + 1,
-                         ys - len(pixelmap) * self.pdf_grid_size - 1)
-        self.canvas.line(xs + len(pixelmap[0]) * self.pdf_grid_size + 0.5, ys,
-                         xs + len(pixelmap[0]) * self.pdf_grid_size + 0.5,
-                         ys - self.pdf_grid_size * len(pixelmap) - 1)
+        rows = range(len(pixelmap) + 1)
+        cols = range(len(pixelmap[0]) + 1)
+        self.canvas.setStrokeColorRGB(0.75, 0.75, 0.75)
+        self.canvas.setFillColorRGB(1, 1, 1)
+        self.canvas.setDash(1, 1)
+        self.canvas.grid([xs + dx * self.pdf_grid_size for dx in cols],
+                         [ys - dy * self.pdf_grid_size for dy in rows])
 
     def get_bound_rect(self, part):
         return max(
@@ -81,19 +73,20 @@ class DrawUtils:
                    lambda it: (it.ypos + it.dy) * unit * self.pdf_grid_size + (it.ypos + 2) / 2 * self.pdf_face_padding,
                    part))
 
-    def draw_title(self, text):
+    def draw_mob_name(self):
         self.canvas.setStrokeColorRGB(0, 0, 0)
         self.canvas.setFillColorRGB(0, 0, 0)
-        self.canvas.setFontSize(24);
-        self.canvas.drawRightString(210 * mm - self.pdf_left, self.pdf_top - 2 * self.pdf_top, text)
+        self.canvas.setFontSize(20);
+        self.canvas.drawRightString(paper_type[0] - self.pdf_left, self.pdf_top - self.pdf_top_bound, self.mob_name)
         self.canvas.setFontSize(12);
 
-    def draw_text(self, text, part):
-        self.canvas.setStrokeColorRGB(0, 0, 0)
-        self.canvas.setFillColorRGB(0, 0, 0)
-        self.canvas.drawString(self.get_min_left(part), self.pdf_top - part[0].ypos, text)
+    def draw_part_name(self, text):
+        self.canvas.setStrokeColorRGB(0, 0, 0, 1)
+        self.canvas.setFillColorRGB(0, 0, 0, 1)
+        self.canvas.drawString(self.current_xpos, self.current_ypos, text)
 
     def draw_bound_rect(self, xsize, ysize):
+        self.canvas.setDash()
         self.canvas.setFillColorRGB(1, 0, 0, 0)
         self.canvas.setStrokeColorRGB(1, 0, 0, 1)
         self.canvas.rect(self.current_xpos, self.current_ypos, xsize, ysize)
@@ -102,11 +95,11 @@ class DrawUtils:
         part = skinmap[part_name]
         x_size, y_size = self.get_bound_rect(part)
 
-        self.draw_text(part_name, part)
-
         for face in part:
             self.draw_face_grid(face, self.current_xpos, self.current_ypos)
-        self.draw_bound_rect(x_size, -y_size)
+        #self.draw_bound_rect(x_size, -y_size)
+        if update_position:
+            self.draw_part_name(part_name)
 
         if not update_position:
             return
@@ -119,8 +112,9 @@ class DrawUtils:
             self.current_ypos = self.pdf_top
 
     def draw_skin(self):
-        a = list(filter(lambda n:self.place_mask_on_head and n != 'mask', skinmap.keys()))
-        for part_name in filter(lambda n:self.place_mask_on_head and n == 'mask', skinmap.keys()):
+        self.draw_mob_name()
+        part_names = list(filter(lambda n: n != 'mask', skinmap.keys()) if self.place_mask_on_head else skinmap.keys())
+        for part_name in part_names:
             self.draw_part(part_name, update_position=not (self.place_mask_on_head and part_name == 'head'))
             if self.place_mask_on_head and part_name == 'head':
                 self.draw_part('mask')
