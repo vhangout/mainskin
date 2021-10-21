@@ -527,7 +527,7 @@
               <item>
                <widget class="QSpinBox" name="sbGridPadding">
                 <property name="minimum">
-                 <number>3</number>
+                 <number>2</number>
                 </property>
                 <property name="maximum">
                  <number>10</number>

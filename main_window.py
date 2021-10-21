@@ -1,3 +1,4 @@
+import re
 from PIL import Image
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QMainWindow, QComboBox, QFileDialog, QMessageBox
@@ -5,7 +6,6 @@ from PyQt5.uic import loadUi
 
 from grid_utils import GridUtils
 from pagesizes import pagesizes
-from reportlab.lib.units import mm
 from skin_utils import SkinUtils
 
 
@@ -54,18 +54,18 @@ class MainWindow(QMainWindow):
                                    mob_name=self.leMobName.text(),
                                    pdf_pagesize=str(self.cbSkinPaperSize.currentText()),
                                    pdf_landscape='Landscape' == str(self.cbSkinPageOrientation.currentText()),
-                                   pdf_left_bound=self.sbSkinMarginHor.value() * mm,
-                                   pdf_top_bound=self.sbSkinMarginVert.value() * mm,
-                                   pdf_grid_size=self.sbSkinGridSize.value() * mm,
-                                   pdf_face_padding=self.sbSkinFacePadding.value() * mm,
-                                   pdf_part_padding=self.sbSkinPartPadding.value() * mm,
+                                   pdf_left_bound=self.sbSkinMarginHor.value(),
+                                   pdf_top_bound=self.sbSkinMarginVert.value(),
+                                   pdf_grid_size=self.sbSkinGridSize.value(),
+                                   pdf_face_padding=self.sbSkinFacePadding.value(),
+                                   pdf_part_padding=self.sbSkinPartPadding.value(),
                                    face_flip_horizontally=self.checkSkinFlipHor.isChecked(),
                                    place_mask_on_head=self.checkSkinMergeMask.isChecked())
-            draw_utils.draw_skin()
+            draw_utils.draw()
 
     @pyqtSlot()
     def saveGridPDF(self):
-        if not self.leGridGridsSizes.text():
+        if not re.fullmatch(r'(?:\d+,?)+', self.leGridGridsSizes.text()):
             self.errorDialog.setInformativeText('Please select grid sizes')
             self.errorDialog.exec_()
             return
@@ -73,12 +73,14 @@ class MainWindow(QMainWindow):
         fname = QFileDialog.getSaveFileName(self, 'Save PDF Document', filter='PDF Documents (*.pdf)')[0]
         if fname:
             grid_utils = GridUtils(pdf_file_name=fname,
-                                   pdf_pagesize='A4',
+                                   grid_height=139,
+                                   grids=[int(size) for size in self.leGridGridsSizes.text().split(',')],
+                                   pdf_pagesize=str(self.cbGridPaperSize.currentText()),
                                    pdf_landscape='Landscape' == str(self.cbGridPageOrientation.currentText()),
-                                   pdf_left_bound=self.sbGridMarginHor.value() * mm,
-                                   pdf_top_bound=self.sbGridMarginVert.value() * mm,
-                                   pdf_padding=3 * mm)
-            grid_utils.draw_grids()
+                                   pdf_left_bound=self.sbGridMarginHor.value(),
+                                   pdf_top_bound=self.sbGridMarginVert.value(),
+                                   pdf_padding=self.sbGridPadding.value())
+            grid_utils.draw()
 
     @staticmethod
     def setComboboxValue(cb: QComboBox, value: str):

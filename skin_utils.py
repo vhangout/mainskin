@@ -1,6 +1,6 @@
 from reportlab.lib.pagesizes import landscape
 from reportlab.pdfgen.canvas import Canvas
-from reportlab.lib.units import cm, mm
+from reportlab.lib.units import mm
 
 from pagesizes import pagesizes
 from skinmap import Face, skinmap, unit
@@ -8,20 +8,20 @@ from skinmap import Face, skinmap, unit
 class SkinUtils:
     def __init__(self, pixelmap, pdf_file_name, mob_name='',
                  pdf_pagesize='A4', pdf_landscape=False,
-                 pdf_left_bound=1 * cm, pdf_top_bound=1 * cm,
-                 pdf_grid_size=5 * mm,
-                 pdf_face_padding=3 * mm, pdf_part_padding=1.5 * cm,
+                 pdf_left_bound=10, pdf_top_bound=10,
+                 pdf_grid_size=5,
+                 pdf_face_padding=3, pdf_part_padding=15,
                  face_flip_horizontally=False,
                  place_mask_on_head=True):
         self.pixelmap = pixelmap
         self.pdf_file_name = pdf_file_name
         self.mob_name = mob_name
         self.pdf_pagesize = pagesizes[pdf_pagesize] if not pdf_landscape else landscape(pagesizes[pdf_pagesize])
-        self.pdf_left_bound = pdf_left_bound
-        self.pdf_top_bound = pdf_top_bound
-        self.pdf_grid_size = pdf_grid_size
-        self.pdf_face_padding = pdf_face_padding
-        self.pdf_part_padding = pdf_part_padding
+        self.pdf_left_bound = pdf_left_bound * mm
+        self.pdf_top_bound = pdf_top_bound * mm
+        self.pdf_grid_size = pdf_grid_size * mm
+        self.pdf_face_padding = pdf_face_padding * mm
+        self.pdf_part_padding = pdf_part_padding * mm
         self.face_flip_horizontally = face_flip_horizontally
         self.place_mask_on_head = place_mask_on_head
         self.pdf_left, self.pdf_top = self.pdf_left_bound, self.pdf_pagesize[1] - self.pdf_top_bound
@@ -112,7 +112,7 @@ class SkinUtils:
             self.canvas.showPage()
             self.current_ypos = self.pdf_top
 
-    def draw_skin(self):
+    def draw(self):
         self.draw_mob_name()
         part_names = list(filter(lambda n: n != 'mask', skinmap.keys()) if self.place_mask_on_head else skinmap.keys())
         for part_name in part_names:
@@ -121,7 +121,3 @@ class SkinUtils:
                 self.draw_part('mask')
         self.canvas.save()
 
-# def place_mask(self.canvas, bitmap):
-#    for face in skinmap['mask0']:
-#        face_pixelmap = get_pixelmap(bitmap, face)
-#        draw_grid(self.canvas, face_pixelmap, face, True)

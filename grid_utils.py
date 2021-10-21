@@ -7,15 +7,19 @@ from pagesizes import pagesizes
 
 class GridUtils:
     def __init__(self, pdf_file_name,
+                 grid_height=139,
+                 grids=[],
                  pdf_pagesize='A4', pdf_landscape=False,
-                 pdf_left_bound=1 * cm, pdf_top_bound=1 * cm,
-                 pdf_padding=3 * mm):
+                 pdf_left_bound=10, pdf_top_bound=10,
+                 pdf_padding=3):
         self.pdf_file_name = pdf_file_name
+        self.grid_height = grid_height * mm
+        self.grids = grids
         self.pdf_pagesize = pagesizes[pdf_pagesize] if not pdf_landscape else landscape(pagesizes[pdf_pagesize])
-        self.pdf_left_bound = pdf_left_bound
-        self.pdf_top_bound = pdf_top_bound
-        self.pdf_padding = pdf_padding
-        self.pdf_left = pdf_left_bound
+        self.pdf_left_bound = pdf_left_bound * mm
+        self.pdf_top_bound = pdf_top_bound * mm
+        self.pdf_padding = pdf_padding * mm
+        self.pdf_left = self.pdf_left_bound
         self.pdf_top = self.pdf_pagesize[1] - self.pdf_top_bound
 
         self.canvas = Canvas(pdf_file_name, pagesize=self.pdf_pagesize)
@@ -29,22 +33,22 @@ class GridUtils:
         self.canvas.setStrokeColorRGB(0, 0, 0)
         self.canvas.grid([xs + size * dx for dx in range(cols + 1)], [ys - size * dy for dy in range(rows + 1)])
 
-    def __draw_angles(self, height):
+    def __draw_angles(self):
         xs = self.current_x
         ys = self.current_y
         self.canvas.setStrokeColorRGB(0, 0, 0)
-        self.canvas.lines([(xs, ys, xs + height * cos(radians(angle)),
-                            ys - height * sin(radians(angle))) for angle in range(5, 85, 5)])
+        self.canvas.lines([(xs, ys, xs + self.grid_height * 0.95 * cos(radians(angle)),
+                            ys - self.grid_height * 0.95 * sin(radians(angle))) for angle in range(5, 85, 5)])
         self.canvas.setFillColorRGB(1, 1, 1, 1)
         self.canvas.wedge(xs - cm, ys + cm, xs + cm, ys - cm, 0, -90, 1, 1)
 
-    def __draw_grid_mm(self, grid_size, height):
+    def __draw_grid_mm(self, grid_size):
         size = grid_size * mm
-        rows = trunc(height / size)
+        rows = trunc(self.grid_height / size)
         cols = trunc((self.pdf_pagesize[0] - 2 * self.pdf_left) / size)
 
         self.__draw_grid(size, rows, cols)
-        self.__draw_angles(height * 0.95)
+        self.__draw_angles()
         self.canvas.setFontSize(8)
         self.canvas.setFillColorRGB(0, 0, 0, 1)
         self.canvas.drawString(self.current_x + 0.5 * mm, self.current_y - 5 * mm, f'{int(grid_size)}mm')
@@ -54,7 +58,7 @@ class GridUtils:
             self.canvas.showPage()
             self.current_y = self.pdf_top
 
-    def draw_grids(self, height, *args):
-        for grid_size in args:
-            self.__draw_grid_mm(grid_size, height)
+    def draw(self):
+        for grid in self.grids:
+            self.__draw_grid_mm(grid)
         self.canvas.save()
