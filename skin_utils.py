@@ -1,14 +1,13 @@
+from reportlab.lib.pagesizes import landscape
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.units import cm, mm
-from reportlab.lib.pagesizes import A4
+
+from pagesizes import pagesizes
 from skinmap import Face, skinmap, unit
-
-#only for A4 portret paper size 210mm x 297mm
-paper_type = A4
-
 
 class SkinUtils:
     def __init__(self, pixelmap, pdf_file_name, mob_name='',
+                 pdf_pagesize='A4', pdf_landscape=False,
                  pdf_left_bound=1 * cm, pdf_top_bound=1 * cm,
                  pdf_grid_size=5 * mm,
                  pdf_face_padding=3 * mm, pdf_part_padding=1.5 * cm,
@@ -17,6 +16,7 @@ class SkinUtils:
         self.pixelmap = pixelmap
         self.pdf_file_name = pdf_file_name
         self.mob_name = mob_name
+        self.pdf_pagesize = pagesizes[pdf_pagesize] if not pdf_landscape else landscape(pagesizes[pdf_pagesize])
         self.pdf_left_bound = pdf_left_bound
         self.pdf_top_bound = pdf_top_bound
         self.pdf_grid_size = pdf_grid_size
@@ -24,13 +24,13 @@ class SkinUtils:
         self.pdf_part_padding = pdf_part_padding
         self.face_flip_horizontally = face_flip_horizontally
         self.place_mask_on_head = place_mask_on_head
-        self.pdf_left, self.pdf_top = self.pdf_left_bound, paper_type[1] - self.pdf_top_bound
+        self.pdf_left, self.pdf_top = self.pdf_left_bound, self.pdf_pagesize[1] - self.pdf_top_bound
         self.current_xpos, self.current_ypos = self.pdf_left, self.pdf_top
 
         min_bound_part = min(skinmap.values(), key=lambda p: self.get_bound_rect(p)[0] * self.get_bound_rect(p)[1])
         self.min_bound_rect = self.get_bound_rect(min_bound_part)
 
-        self.canvas = Canvas(pdf_file_name, pagesize=paper_type)
+        self.canvas = Canvas(pdf_file_name, pagesize=self.pdf_pagesize)
 
     def get_pixelmap(self, face: Face):
         return [self.pixelmap[y][face.x * unit:face.x * unit + face.dx * unit]
@@ -77,7 +77,8 @@ class SkinUtils:
         self.canvas.setStrokeColorRGB(0, 0, 0)
         self.canvas.setFillColorRGB(0, 0, 0)
         self.canvas.setFontSize(20);
-        self.canvas.drawRightString(paper_type[0] - self.pdf_left, self.pdf_top - self.pdf_top_bound, self.mob_name)
+        self.canvas.drawRightString(self.pdf_pagesize[0] - self.pdf_left, self.pdf_top - self.pdf_top_bound,
+                                    self.mob_name)
         self.canvas.setFontSize(12);
 
     def draw_part_name(self, text):
@@ -97,14 +98,14 @@ class SkinUtils:
 
         for face in part:
             self.draw_face_grid(face, self.current_xpos, self.current_ypos)
-        #self.draw_bound_rect(x_size, -y_size)
+        # self.draw_bound_rect(x_size, -y_size)
         if update_position:
             self.draw_part_name(part_name)
 
         if not update_position:
             return
         self.current_xpos = self.current_xpos + x_size + self.pdf_part_padding
-        if self.current_xpos + self.min_bound_rect[0] > paper_type[0] - self.pdf_left:
+        if self.current_xpos + self.min_bound_rect[0] > self.pdf_pagesize[0] - self.pdf_left:
             self.current_xpos = self.pdf_left
             self.current_ypos = self.current_ypos - y_size - self.pdf_part_padding
         if self.current_ypos - self.min_bound_rect[1] < self.pdf_top_bound:
@@ -119,7 +120,6 @@ class SkinUtils:
             if self.place_mask_on_head and part_name == 'head':
                 self.draw_part('mask')
         self.canvas.save()
-
 
 # def place_mask(self.canvas, bitmap):
 #    for face in skinmap['mask0']:

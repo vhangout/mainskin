@@ -1,24 +1,24 @@
 from math import trunc, pi, sin, cos, radians
+
+from reportlab.lib.pagesizes import landscape
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.units import cm, mm
-from reportlab.lib.pagesizes import A4
-
-# only for A4 portret paper size 210mm x 297mm
-paper_type = A4
-
+from pagesizes import pagesizes
 
 class GridUtils:
     def __init__(self, pdf_file_name,
+                 pdf_pagesize='A4', pdf_landscape=False,
                  pdf_left_bound=1 * cm, pdf_top_bound=1 * cm,
                  pdf_padding=3 * mm):
         self.pdf_file_name = pdf_file_name
+        self.pdf_pagesize = pagesizes[pdf_pagesize] if not pdf_landscape else landscape(pagesizes[pdf_pagesize])
         self.pdf_left_bound = pdf_left_bound
         self.pdf_top_bound = pdf_top_bound
         self.pdf_padding = pdf_padding
         self.pdf_left = pdf_left_bound
-        self.pdf_top = paper_type[1] - self.pdf_top_bound
+        self.pdf_top = self.pdf_pagesize[1] - self.pdf_top_bound
 
-        self.canvas = Canvas(pdf_file_name, pagesize=paper_type)
+        self.canvas = Canvas(pdf_file_name, pagesize=self.pdf_pagesize)
 
         self.current_x = self.pdf_left
         self.current_y = self.pdf_top
@@ -41,7 +41,7 @@ class GridUtils:
     def __draw_grid_mm(self, grid_size, height):
         size = grid_size * mm
         rows = trunc(height / size)
-        cols = trunc((paper_type[0] - 2 * self.pdf_left) / size)
+        cols = trunc((self.pdf_pagesize[0] - 2 * self.pdf_left) / size)
 
         self.__draw_grid(size, rows, cols)
         self.__draw_angles(height * 0.95)
