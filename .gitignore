@@ -34,3 +34,9 @@ static/js/
 static/css/
 
 logs/
+
+*.spec
+build
+build/*
+dist
+dist/*
