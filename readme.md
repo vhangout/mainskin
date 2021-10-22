@@ -7,4 +7,4 @@
 ![image](./images/grids.png)
 
 Релиз можно скачать здесь в папках релизов.
-Пока есть сборка под Windows. 
+Пока есть сборка под [Windows](/vhangout/mainskin/releases/tag/untagged-f4d243e756dc3b7e6fe6) 
