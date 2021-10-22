@@ -9,4 +9,5 @@
 После распечатки страницы можно заламинировать. И будет отличный шаблон для 3D ручки. 
 
 Релиз можно скачать здесь в папках релизов.
-Пока есть сборка под [Windows x64](/vhangout/mainskin/releases/download/latest/mcs2pdf.zip) 
+Пока есть сборка под [Windows x64](/vhangout/mainskin/releases/tag/latest)
+
