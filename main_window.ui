@@ -42,7 +42,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <property name="minimumSize">
@@ -65,6 +65,104 @@
           </property>
           <item row="0" column="0">
            <layout class="QGridLayout" name="gridLayout">
+            <item row="8" column="2">
+             <layout class="QHBoxLayout" name="horizontalLayout_7">
+              <item>
+               <widget class="QComboBox" name="cbSkinPaperSize"/>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_8">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item row="5" column="2">
+             <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <item>
+               <widget class="QSpinBox" name="sbSkinPartPadding">
+                <property name="minimum">
+                 <number>10</number>
+                </property>
+                <property name="maximum">
+                 <number>30</number>
+                </property>
+                <property name="value">
+                 <number>15</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_7">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item row="7" column="2">
+             <widget class="QCheckBox" name="checkSkinMergeMask">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="0">
+             <widget class="QLabel" name="label_17">
+              <property name="text">
+               <string>Merge Mask on Face</string>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="2">
+             <layout class="QHBoxLayout" name="horizontalLayout_9">
+              <item>
+               <widget class="QComboBox" name="cbSkinPageOrientation">
+                <item>
+                 <property name="text">
+                  <string>Portrait</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Landscape</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_9">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
             <item row="2" column="2">
              <layout class="QHBoxLayout" name="horizontalLayout_4">
               <property name="sizeConstraint">
@@ -105,32 +203,7 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="2">
-             <layout class="QHBoxLayout" name="horizontalLayout">
-              <item>
-               <widget class="QLineEdit" name="leSkinPNGFile">
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="pbSkinBrowsePNG">
-                <property name="text">
-                 <string>Browse</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="label_10">
-              <property name="text">
-               <string>Skin part padding (mm)</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="2">
+            <item row="4" column="2">
              <layout class="QHBoxLayout" name="horizontalLayout_5">
               <item>
                <widget class="QSpinBox" name="sbSkinFacePadding">
@@ -160,31 +233,35 @@
               </item>
              </layout>
             </item>
-            <item row="9" column="0">
+            <item row="0" column="2">
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <item>
+               <widget class="QLineEdit" name="leSkinPNGFile">
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pbSkinBrowsePNG">
+                <property name="text">
+                 <string>Browse</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="label_10">
+              <property name="text">
+               <string>Skin part padding (mm)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="0">
              <widget class="QLabel" name="label_5">
               <property name="text">
                <string>Margins (mm)</string>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="0">
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>Page Orientation</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label">
-              <property name="text">
-               <string>PNG Skin file</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_2">
-              <property name="text">
-               <string>Mob name</string>
               </property>
              </widget>
             </item>
@@ -195,7 +272,28 @@
               </property>
              </widget>
             </item>
-            <item row="9" column="2">
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>Mob name</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>PNG Skin file</string>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>Page Orientation</string>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="2">
              <layout class="QHBoxLayout" name="horizontalLayout_2">
               <item>
                <widget class="QLabel" name="label_6">
@@ -259,129 +357,45 @@
               </item>
              </layout>
             </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_9">
-              <property name="text">
-               <string>Skin face padding (mm)</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="0">
+            <item row="8" column="0">
              <widget class="QLabel" name="label_3">
               <property name="text">
                <string>Paper Size</string>
               </property>
              </widget>
             </item>
-            <item row="5" column="0">
-             <widget class="QLabel" name="label_16">
-              <property name="text">
-               <string>Flip Skin Horizontally</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="2">
+            <item row="6" column="2">
              <widget class="QCheckBox" name="checkSkinFlipHor">
               <property name="text">
                <string/>
               </property>
              </widget>
             </item>
-            <item row="7" column="2">
-             <layout class="QHBoxLayout" name="horizontalLayout_7">
-              <item>
-               <widget class="QComboBox" name="cbSkinPaperSize"/>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_8">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item row="4" column="2">
-             <layout class="QHBoxLayout" name="horizontalLayout_6">
-              <item>
-               <widget class="QSpinBox" name="sbSkinPartPadding">
-                <property name="minimum">
-                 <number>10</number>
-                </property>
-                <property name="maximum">
-                 <number>30</number>
-                </property>
-                <property name="value">
-                 <number>15</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_7">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item row="8" column="2">
-             <layout class="QHBoxLayout" name="horizontalLayout_9">
-              <item>
-               <widget class="QComboBox" name="cbSkinPageOrientation">
-                <item>
-                 <property name="text">
-                  <string>Portrait</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Landscape</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_9">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item row="6" column="0">
-             <widget class="QLabel" name="label_17">
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_9">
               <property name="text">
-               <string>Merge Mask on Face</string>
+               <string>Skin face padding (mm)</string>
               </property>
              </widget>
             </item>
-            <item row="6" column="2">
-             <widget class="QCheckBox" name="checkSkinMergeMask">
+            <item row="6" column="0">
+             <widget class="QLabel" name="label_16">
+              <property name="text">
+               <string>Flip Skin Horizontally</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_22">
+              <property name="text">
+               <string>Dash Grid</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="2">
+             <widget class="QCheckBox" name="checkSkinDashGrid">
               <property name="text">
                <string/>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -446,10 +460,57 @@
           </property>
           <item>
            <layout class="QGridLayout" name="gridLayout_4">
+            <item row="1" column="2">
+             <layout class="QHBoxLayout" name="horizontalLayout_10">
+              <item>
+               <widget class="QSpinBox" name="sbGridHeight">
+                <property name="minimum">
+                 <number>100</number>
+                </property>
+                <property name="maximum">
+                 <number>999</number>
+                </property>
+                <property name="singleStep">
+                 <number>10</number>
+                </property>
+                <property name="value">
+                 <number>139</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_18">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
             <item row="0" column="0">
              <widget class="QLabel" name="label_20">
               <property name="text">
-               <string>Grids Size(mm)</string>
+               <string>Grids Size (mm)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_19">
+              <property name="text">
+               <string>Height (mm)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_11">
+              <property name="text">
+               <string>Grids padding (mm)</string>
               </property>
              </widget>
             </item>
@@ -477,14 +538,7 @@
               </item>
              </layout>
             </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_11">
-              <property name="text">
-               <string>Grids padding (mm)</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
+            <item row="5" column="0">
              <widget class="QLabel" name="label_13">
               <property name="text">
                <string>Page Orientation</string>
@@ -492,6 +546,36 @@
              </widget>
             </item>
             <item row="3" column="2">
+             <layout class="QHBoxLayout" name="horizontalLayout_15">
+              <item>
+               <widget class="QSpinBox" name="sbGridPadding">
+                <property name="minimum">
+                 <number>2</number>
+                </property>
+                <property name="maximum">
+                 <number>10</number>
+                </property>
+                <property name="value">
+                 <number>3</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_15">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item row="5" column="2">
              <layout class="QHBoxLayout" name="horizontalLayout_16">
               <item>
                <widget class="QComboBox" name="cbGridPageOrientation">
@@ -522,44 +606,14 @@
               </item>
              </layout>
             </item>
-            <item row="1" column="2">
-             <layout class="QHBoxLayout" name="horizontalLayout_15">
-              <item>
-               <widget class="QSpinBox" name="sbGridPadding">
-                <property name="minimum">
-                 <number>2</number>
-                </property>
-                <property name="maximum">
-                 <number>10</number>
-                </property>
-                <property name="value">
-                 <number>3</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_15">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item row="2" column="0">
+            <item row="4" column="0">
              <widget class="QLabel" name="label_18">
               <property name="text">
                <string>Paper Size</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="2">
+            <item row="4" column="2">
              <layout class="QHBoxLayout" name="horizontalLayout_14">
               <item>
                <widget class="QComboBox" name="cbGridPaperSize"/>
@@ -579,14 +633,14 @@
               </item>
              </layout>
             </item>
-            <item row="4" column="0">
+            <item row="6" column="0">
              <widget class="QLabel" name="label_12">
               <property name="text">
                <string>Margins (mm)</string>
               </property>
              </widget>
             </item>
-            <item row="4" column="2">
+            <item row="6" column="2">
              <layout class="QHBoxLayout" name="horizontalLayout_11">
               <item>
                <widget class="QLabel" name="label_14">
@@ -649,6 +703,23 @@
                </spacer>
               </item>
              </layout>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_21">
+              <property name="text">
+               <string>Diagonal lines</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <widget class="QCheckBox" name="chekShowDiagonals">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>

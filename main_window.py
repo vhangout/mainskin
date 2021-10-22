@@ -1,12 +1,11 @@
 import re
-from PIL import Image
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QMainWindow, QComboBox, QFileDialog, QMessageBox
 from PyQt5.uic import loadUi
 
-from grid_utils import GridUtils
 from pagesizes import pagesizes
 from skin_utils import SkinUtils
+from grid_utils import GridUtils
 
 
 class MainWindow(QMainWindow):
@@ -45,18 +44,15 @@ class MainWindow(QMainWindow):
 
         fname = QFileDialog.getSaveFileName(self, 'Save PDF Document', filter='PDF Documents (*.pdf)')[0]
         if fname:
-            skin = Image.open(self.leSkinPNGFile.text())
-            data = list(skin.getdata())
-            pixelmap = [data[n * 64:(n + 1) * 64] for n in range(64)]
-
-            draw_utils = SkinUtils(pixelmap=pixelmap,
+            draw_utils = SkinUtils(pixelmap=self.leSkinPNGFile.text(),
                                    pdf_file_name=fname,
                                    mob_name=self.leMobName.text(),
                                    pdf_pagesize=str(self.cbSkinPaperSize.currentText()),
                                    pdf_landscape='Landscape' == str(self.cbSkinPageOrientation.currentText()),
                                    pdf_left_bound=self.sbSkinMarginHor.value(),
                                    pdf_top_bound=self.sbSkinMarginVert.value(),
-                                   pdf_grid_size=self.sbSkinGridSize.value(),
+                                   grid_size=self.sbSkinGridSize.value(),
+                                   dash_grid=self.checkSkinDashGrid.isChecked(),
                                    pdf_face_padding=self.sbSkinFacePadding.value(),
                                    pdf_part_padding=self.sbSkinPartPadding.value(),
                                    face_flip_horizontally=self.checkSkinFlipHor.isChecked(),
@@ -73,8 +69,9 @@ class MainWindow(QMainWindow):
         fname = QFileDialog.getSaveFileName(self, 'Save PDF Document', filter='PDF Documents (*.pdf)')[0]
         if fname:
             grid_utils = GridUtils(pdf_file_name=fname,
-                                   grid_height=139,
+                                   grid_height=self.sbGridHeight.value(),
                                    grids=[int(size) for size in self.leGridGridsSizes.text().split(',')],
+                                   diagonal_lines=self.chekShowDiagonals.isChecked(),
                                    pdf_pagesize=str(self.cbGridPaperSize.currentText()),
                                    pdf_landscape='Landscape' == str(self.cbGridPageOrientation.currentText()),
                                    pdf_left_bound=self.sbGridMarginHor.value(),
