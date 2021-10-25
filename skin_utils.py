@@ -121,6 +121,7 @@ class SkinUtils:
         if self.current_xpos + x_size > self.pdf_pagesize[0] - self.pdf_left:
             self.current_xpos = self.pdf_left
             self.current_ypos = self.current_ypos - self.old_y_size - self.pdf_part_padding
+            self.old_y_size = 0
         if self.current_ypos - y_size < self.pdf_top_bound:
             self.canvas.showPage()
             self.current_ypos = self.pdf_top
@@ -135,7 +136,7 @@ class SkinUtils:
             return
 
         self.current_xpos = self.current_xpos + x_size + self.pdf_part_padding
-        self.old_y_size = y_size
+        self.old_y_size = y_size if y_size > self.old_y_size else self.old_y_size
 
     def draw(self):
         self.draw_mob_name()
