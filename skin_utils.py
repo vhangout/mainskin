@@ -49,6 +49,7 @@ class SkinUtils:
         self.min_bound_rect = self.get_bound_rect(min_bound_part)
 
         self.canvas = Canvas(pdf_file_name, pagesize=self.pdf_pagesize)
+        self.old_y_size = 0
 
     def get_pixelmap(self, face: Face):
         return [self.pixelmap[y][face.x * unit:face.x * unit + face.dx * unit]
@@ -119,25 +120,28 @@ class SkinUtils:
 
         if self.current_xpos + x_size > self.pdf_pagesize[0] - self.pdf_left:
             self.current_xpos = self.pdf_left
-            self.current_ypos = self.current_ypos - y_size - self.pdf_part_padding
+            self.current_ypos = self.current_ypos - self.old_y_size - self.pdf_part_padding
         if self.current_ypos - y_size < self.pdf_top_bound:
             self.canvas.showPage()
             self.current_ypos = self.pdf_top
 
         for face in part:
             self.draw_face_grid(face, self.current_xpos, self.current_ypos)
-        # self.draw_bound_rect(x_size, -y_size)
+        #self.draw_bound_rect(x_size, -y_size)
+
         if update_position:
             self.draw_part_name(part_name)
-
-        if not update_position:
+        else:
             return
+
         self.current_xpos = self.current_xpos + x_size + self.pdf_part_padding
+        self.old_y_size = y_size
 
     def draw(self):
         self.draw_mob_name()
         part_names = list(filter(lambda n: n != 'mask', skinmap.keys()) if self.place_mask_on_head else skinmap.keys())
 
+        self.old_y_size = 0
         for part_name in part_names:
             self.draw_part(part_name, update_position=not (self.place_mask_on_head and part_name == 'head'))
             if self.place_mask_on_head and part_name == 'head':
